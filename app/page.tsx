@@ -183,7 +183,7 @@ Aguardo retorno. Obrigado!`
     }))
   }
 
-  console.log(config);
+  console.log("config" + config);
 
   return (
     <>
@@ -191,7 +191,7 @@ Aguardo retorno. Obrigado!`
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
-      ) : config != null && (
+      ) : config && config.horario_funcionamento && (
         <div className="flex flex-col min-h-screen">
           {/* Header */}
           <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
