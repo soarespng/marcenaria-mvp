@@ -184,6 +184,8 @@ Aguardo retorno. Obrigado!`
     }))
   }
 
+  console.log(config);
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
@@ -424,7 +426,9 @@ Aguardo retorno. Obrigado!`
                     </div>
 
                     <div className="flex items-center justify-between border-t pt-3">
-                      <span className="text-xl font-bold text-primary">
+                      <span className="text-xl font-bold text-primary" style={{
+                        color: config?.cor_primaria || "#000",
+                      }}>
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
@@ -435,7 +439,10 @@ Aguardo retorno. Obrigado!`
                       </div>
                     </div>
 
-                    <Button className="w-full" size="sm" onClick={() => solicitarOrcamento(produto)}>
+                    <Button className="w-full" size="sm" onClick={() => solicitarOrcamento(produto)} style={{
+                      backgroundColor: config?.cor_primaria || "#78350f",
+                      color: "#fff",
+                    }}>
                       Solicitar Orçamento
                     </Button>
                   </CardContent>
@@ -584,7 +591,7 @@ Aguardo retorno. Obrigado!`
             </Card>
 
             {/* Informações de contato */}
-            
+
             {config?.endereco || config?.telefone || config?.email_contato || config?.horario_funcionamento && (
               <Card className="overflow-hidden border-2 py-0">
                 <CardContent className="p-0">
