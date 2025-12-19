@@ -333,7 +333,11 @@ Aguardo retorno. Obrigado!`
               {categorias.length > 0 && (
                 <div className="mb-8 flex flex-wrap justify-center gap-3">
                   <Button
-                    variant={categoriaFiltro === "todas" ? "default" : "outline"}
+                    style={{
+                      backgroundColor: config?.cor_primaria || "#78350f",
+                      color: "#fff",
+                    }}
+                    variant={categoriaFiltro === "todas" ? "default" : "secondary"}
                     size="sm"
                     onClick={() => setCategoriaFiltro("todas")}
                     className="min-w-[100px]"
@@ -343,7 +347,7 @@ Aguardo retorno. Obrigado!`
                   {categorias.map((categoria) => (
                     <Button
                       key={categoria.id}
-                      variant={categoriaFiltro === categoria.id ? "default" : "outline"}
+                      variant={categoriaFiltro === categoria.id ? "default" : "secondary"}
                       size="sm"
                       onClick={() => setCategoriaFiltro(categoria.id)}
                       className="min-w-[100px]"
@@ -597,67 +601,72 @@ Aguardo retorno. Obrigado!`
 
                 {/* Informações de contato */}
 
-                {config?.endereco || config?.telefone || config?.email_contato || config?.horario_funcionamento && (
-                  <Card className="overflow-hidden border-2 py-0">
-                    <CardContent className="p-0">
-                      <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-4">
-                        {config?.endereco && (
-                          <div className="bg-background p-6 transition-colors hover:bg-muted/50">
-                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                              <MapPin className="h-6 w-6 text-primary" style={{
-                                color: config?.cor_primaria || "#78350f",
-                              }} />
+                {(
+                  config?.endereco ||
+                  config?.telefone ||
+                  config?.email_contato ||
+                  config?.horario_funcionamento
+                ) && (
+                    <Card className="overflow-hidden border-2 py-0">
+                      <CardContent className="p-0">
+                        <div className="grid gap-px bg-border md:grid-cols-2 lg:grid-cols-4">
+                          {config?.endereco && (
+                            <div className="bg-background p-6 transition-colors hover:bg-muted/50">
+                              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                                <MapPin className="h-6 w-6 text-primary" style={{
+                                  color: config?.cor_primaria || "#78350f",
+                                }} />
+                              </div>
+                              <h4 className="mb-2 font-semibold">Endereço</h4>
+                              <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                                {config.endereco}
+                              </p>
                             </div>
-                            <h4 className="mb-2 font-semibold">Endereço</h4>
-                            <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
-                              {config.endereco}
-                            </p>
-                          </div>
-                        )}
+                          )}
 
-                        {config?.telefone && (
-                          <div className="bg-background p-6 transition-colors hover:bg-muted/50">
-                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                              <Phone className="h-6 w-6 text-primary" style={{
-                                color: config?.cor_primaria || "#78350f",
-                              }} />
+                          {config?.telefone && (
+                            <div className="bg-background p-6 transition-colors hover:bg-muted/50">
+                              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                                <Phone className="h-6 w-6 text-primary" style={{
+                                  color: config?.cor_primaria || "#78350f",
+                                }} />
+                              </div>
+                              <h4 className="mb-2 font-semibold">Telefone</h4>
+                              <p className="mb-1 text-sm font-medium">{config.telefone}</p>
+                              <p className="text-xs text-muted-foreground">WhatsApp disponível</p>
                             </div>
-                            <h4 className="mb-2 font-semibold">Telefone</h4>
-                            <p className="mb-1 text-sm font-medium">{config.telefone}</p>
-                            <p className="text-xs text-muted-foreground">WhatsApp disponível</p>
-                          </div>
-                        )}
+                          )}
 
-                        {config?.email_contato && (
-                          <div className="bg-background p-6 transition-colors hover:bg-muted/50">
-                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                              <Mail className="h-6 w-6 text-primary" style={{
-                                color: config?.cor_primaria || "#78350f",
-                              }} />
+                          {config?.email_contato && (
+                            <div className="bg-background p-6 transition-colors hover:bg-muted/50">
+                              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                                <Mail className="h-6 w-6 text-primary" style={{
+                                  color: config?.cor_primaria || "#78350f",
+                                }} />
+                              </div>
+                              <h4 className="mb-2 font-semibold">E-mail</h4>
+                              <p className="mb-1 text-sm font-medium break-all">contato@marcenaria.com.br</p>
+                              <p className="text-xs text-muted-foreground">Respondemos em até 24h</p>
                             </div>
-                            <h4 className="mb-2 font-semibold">E-mail</h4>
-                            <p className="mb-1 text-sm font-medium break-all">contato@marcenaria.com.br</p>
-                            <p className="text-xs text-muted-foreground">Respondemos em até 24h</p>
-                          </div>
-                        )}
+                          )}
 
-                        {config?.horario_funcionamento && (
-                          <div className="bg-background p-6 transition-colors hover:bg-muted/50">
-                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                              <Clock className="h-6 w-6 text-primary" style={{
-                                color: config?.cor_primaria || "#78350f",
-                              }} />
+                          {config?.horario_funcionamento && (
+                            <div className="bg-background p-6 transition-colors hover:bg-muted/50">
+                              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                                <Clock className="h-6 w-6 text-primary" style={{
+                                  color: config?.cor_primaria || "#78350f",
+                                }} />
+                              </div>
+                              <h4 className="mb-2 font-semibold">Horário</h4>
+                              <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                                {config.horario_funcionamento}
+                              </p>
                             </div>
-                            <h4 className="mb-2 font-semibold">Horário</h4>
-                            <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
-                              {config.horario_funcionamento}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
               </div>
             </div>
           </section>
