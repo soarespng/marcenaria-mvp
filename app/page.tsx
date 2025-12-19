@@ -645,7 +645,9 @@ Aguardo retorno. Obrigado!`
                                 }} />
                               </div>
                               <h4 className="mb-2 font-semibold">E-mail</h4>
-                              <p className="mb-1 text-sm font-medium break-all">contato@marcenaria.com.br</p>
+                              <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                                {config.email_contato}
+                              </p>
                               <p className="text-xs text-muted-foreground">Respondemos em até 24h</p>
                             </div>
                           )}

@@ -26,6 +26,7 @@ export default function ConfiguracoesPage() {
     nome_empresa: "",
     telefone: "",
     endereco: "",
+    email_contato: "",
     horario_funcionamento: "",
     logo_url: "",
     cor_primaria: "#0ea5e9",
@@ -56,6 +57,7 @@ export default function ConfiguracoesPage() {
         nome_empresa: configData.nome_empresa || "",
         telefone: configData.telefone || "",
         endereco: configData.endereco || "",
+        email_contato: configData.email_contato || "",
         horario_funcionamento: configData.horario_funcionamento || "",
         logo_url: configData.logo_url || "",
         cor_primaria: configData.cor_primaria || "#0ea5e9",
@@ -89,6 +91,7 @@ export default function ConfiguracoesPage() {
           nome_empresa: formData.nome_empresa,
           telefone: formData.telefone || null,
           endereco: formData.endereco || null,
+          email_contato: formData.email_contato || null,
           horario_funcionamento: formData.horario_funcionamento || null,
           logo_url: formData.logo_url || null,
           cor_primaria: formData.cor_primaria,
@@ -189,6 +192,17 @@ export default function ConfiguracoesPage() {
                     value={formData.endereco}
                     onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
                     placeholder="Rua, número, bairro, cidade, estado"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email_contato">Email de contato</Label>
+                  <Textarea
+                    id="email_contato"
+                    value={formData.email_contato}
+                    onChange={(e) => setFormData({ ...formData, email_contato: e.target.value })}
+                    placeholder="email@contato.com.br"
                     rows={3}
                   />
                 </div>
