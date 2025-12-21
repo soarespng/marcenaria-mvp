@@ -140,7 +140,7 @@ export default function EditarContatoPage({
     <>
       <AppHeader title="Editar Contato">
         <Link href={`/app/contatos/${id}`}>
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
@@ -198,7 +198,7 @@ export default function EditarContatoPage({
 
               <div className="flex gap-2 justify-end">
                 <Link href={`/app/contatos/${id}`}>
-                  <Button type="button" variant="outline">
+                  <Button type="button" className="hover:bg-transparent cursor-pointer" variant="outline">
                     Cancelar
                   </Button>
                 </Link>

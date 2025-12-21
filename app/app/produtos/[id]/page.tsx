@@ -113,7 +113,7 @@ export default function VerProdutoPage({
               <p className="text-center text-muted-foreground">O produto solicitado não foi encontrado.</p>
               <div className="flex justify-center mt-4">
                 <Link href="/app/produtos">
-                  <Button variant="outline">
+                  <Button variant="outline" className="hover:bg-transparent cursor-pointer">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Voltar
                   </Button>
@@ -133,13 +133,13 @@ export default function VerProdutoPage({
     <>
       <AppHeader title="Detalhes do Produto">
         <Link href={`/app/produtos/${id}/editar`}>
-          <Button>
+          <Button className="cursor-pointer">
             <Pencil className="mr-2 h-4 w-4" />
             Editar
           </Button>
         </Link>
         <Link href="/app/produtos">
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>

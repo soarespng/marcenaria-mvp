@@ -80,7 +80,7 @@ export default function CriarContatoPage() {
     <>
       <AppHeader title="Novo Contato">
         <Link href="/app/contatos">
-          <Button variant="outline">← Voltar</Button>
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >← Voltar</Button>
         </Link>
       </AppHeader>
 
@@ -135,7 +135,7 @@ export default function CriarContatoPage() {
 
               <div className="flex gap-2 justify-end">
                 <Link href="/app/contatos">
-                  <Button type="button" variant="outline">
+                  <Button type="button" className="hover:bg-transparent cursor-pointer" variant="outline">
                     Cancelar
                   </Button>
                 </Link>

@@ -226,7 +226,7 @@ export default function ConfiguracoesPage() {
   return (
     <>
       <AppHeader title="Configurações">
-        <Button variant="outline" onClick={() => router.push("/app/produtos")}>
+        <Button variant="outline" className="hover:bg-transparent cursor-pointer" onClick={() => router.push("/app/produtos")}>
           ← Voltar
         </Button>
       </AppHeader>

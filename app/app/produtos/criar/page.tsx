@@ -87,7 +87,7 @@ export default function CriarProdutoPage() {
     return (
       <>
         <AppHeader title="Adicionar Imagens">
-          <Button variant="outline" onClick={handleFinalizarCriacao}>
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" onClick={handleFinalizarCriacao}>
             Finalizar e Voltar
           </Button>
         </AppHeader>
@@ -119,7 +119,7 @@ export default function CriarProdutoPage() {
     <>
       <AppHeader title="Criar Produto">
         <Link href="/app/produtos">
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
@@ -220,7 +220,7 @@ export default function CriarProdutoPage() {
                   )}
                 </Button>
                 <Link href="/app/produtos">
-                  <Button type="button" variant="outline" disabled={loading}>
+                  <Button type="button" className="hover:bg-transparent cursor-pointer" variant="outline" disabled={loading}>
                     Cancelar
                   </Button>
                 </Link>

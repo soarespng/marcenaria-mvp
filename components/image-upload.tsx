@@ -146,8 +146,8 @@ export function ImageUpload({ produtoId, images, onChange, maxImages = 5 }: Imag
           Imagens do Produto ({safeImages.length}/{maxImages})
         </Label>
         <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" disabled={uploading || safeImages.length >= maxImages} asChild>
-            <label className="cursor-pointer">
+          <Button type="button" className="hover:bg-transparent cursor-pointer" variant="outline" disabled={uploading || safeImages.length >= maxImages} asChild>
+            <label className="cursor-pointer ">
               {uploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

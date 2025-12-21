@@ -174,7 +174,7 @@ export default function EditarProdutoPage({
               <p className="text-center text-muted-foreground">O produto solicitado não foi encontrado.</p>
               <div className="flex justify-center mt-4">
                 <Link href="/app/produtos">
-                  <Button variant="outline">
+                  <Button variant="outline" className="hover:bg-transparent cursor-pointer">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Voltar
                   </Button>
@@ -191,7 +191,7 @@ export default function EditarProdutoPage({
     <>
       <AppHeader title="Editar Produto">
         <Link href={`/app/produtos/`}>
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
@@ -294,7 +294,7 @@ export default function EditarProdutoPage({
                   )}
                 </Button>
                 <Link href={`/app/produtos/${id}`}>
-                  <Button type="button" variant="outline" disabled={saving}>
+                  <Button type="button" variant="outline" disabled={saving} className="hover:bg-transparent cursor-pointer">
                     Cancelar
                   </Button>
                 </Link>

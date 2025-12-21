@@ -102,13 +102,14 @@ export default function CategoriasPage() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
+                          className="hover:bg-transparent cursor-pointer"
                           variant="ghost"
                           size="icon"
                           onClick={() => router.push(`/app/categorias/${categoria.id}/editar`)}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setDeleteId(categoria.id)}>
+                        <Button variant="ghost" size="icon" className="hover:bg-transparent cursor-pointer" onClick={() => setDeleteId(categoria.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </div>

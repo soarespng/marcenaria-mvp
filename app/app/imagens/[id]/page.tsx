@@ -87,7 +87,7 @@ export default function VerImagemPage({
         </Link>
 
         <Link href="/app/imagens">
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>

@@ -129,7 +129,7 @@ export default function EditarCategoriaPage({
   return (
     <>
       <AppHeader title="Editar Categoria">
-        <Button variant="outline" onClick={() => router.push("/app/categorias")}>
+        <Button variant="outline" className="hover:bg-transparent cursor-pointer" onClick={() => router.push("/app/categorias")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar
         </Button>
@@ -168,6 +168,7 @@ export default function EditarCategoriaPage({
               <div className="flex justify-end gap-3">
                 <Button
                   type="button"
+                  className="hover:bg-transparent cursor-pointer"
                   variant="outline"
                   onClick={() => router.push("/app/categorias")}
                   disabled={saving}

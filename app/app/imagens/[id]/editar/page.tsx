@@ -114,7 +114,7 @@ export default function EditarImagemPage({ params }: { params: Promise<{ id: str
     <>
       <AppHeader title="Editar Imagem" >
         <Link href="/app/imagens">
-          <Button variant="outline">
+          <Button className="hover:bg-transparent cursor-pointer" variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
@@ -174,7 +174,7 @@ export default function EditarImagemPage({ params }: { params: Promise<{ id: str
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {loading ? "Salvando..." : "Salvar Alterações"}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
+                <Button type="button" className="hover:bg-transparent cursor-pointer" variant="outline" onClick={() => router.back()} disabled={loading}>
                   Cancelar
                 </Button>
               </div>

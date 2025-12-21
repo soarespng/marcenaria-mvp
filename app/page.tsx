@@ -401,10 +401,13 @@ Aguardo retorno. Obrigado!`
                 </Button>
                 <Button
                   size="lg"
-                  style={{ "--hover-color": config?.cor_primaria } as React.CSSProperties}
-                  className="text-(--hover-color) px-8 bg-white/80 backdrop-blur shadow-lg hover:bg-(--hover-color) hover:text-white"
+                  className="text-base px-8 shadow-lg"
+                  style={{
+                    backgroundColor: config?.cor_secundaria || "#78350f",
+                    color: "#fff",
+                  }}
                 >
-                  Faça um orçamento
+                  <Link href="#contato">Faça um orçamento</Link>
                 </Button>
               </div>
             </div>
@@ -641,7 +644,6 @@ Aguardo retorno. Obrigado!`
                                 color: config?.cor_primaria || "#78350f",
                               }}
                             >
-                              <Info className="h-4 w-4 mr-1" />
                               Ver Detalhes
                             </Button>
                             <Button

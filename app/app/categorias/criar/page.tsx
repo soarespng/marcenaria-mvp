@@ -79,7 +79,7 @@ export default function CriarCategoriaPage() {
   return (
     <>
       <AppHeader title="Nova Categoria">
-        <Button variant="outline" onClick={() => router.push("/app/categorias")}>
+        <Button variant="outline" className="hover:bg-transparent cursor-pointer"  onClick={() => router.push("/app/categorias")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Voltar
         </Button>
@@ -119,6 +119,7 @@ export default function CriarCategoriaPage() {
                 <Button
                   type="button"
                   variant="outline"
+                  className="hover:bg-transparent cursor-pointer"
                   onClick={() => router.push("/app/categorias")}
                   disabled={saving}
                 >

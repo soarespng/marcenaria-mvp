@@ -68,7 +68,7 @@ export default function VerOrcamentoPage({
               <p className="text-center text-muted-foreground">O orçamento solicitado não foi encontrado.</p>
               <div className="flex justify-center mt-4">
                 <Link href="/app/orcamentos">
-                  <Button variant="outline">
+                  <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Voltar
                   </Button>
@@ -91,7 +91,7 @@ export default function VerOrcamentoPage({
           </Button>
         </a>
         <Link href="/app/orcamentos">
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>

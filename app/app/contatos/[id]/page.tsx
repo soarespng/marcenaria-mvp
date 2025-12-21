@@ -75,7 +75,7 @@ export default function VerContatoPage({
               <p className="text-center text-muted-foreground">O contato solicitado não foi encontrado.</p>
               <div className="flex justify-center mt-4">
                 <Link href="/app/contatos">
-                  <Button variant="outline">
+                  <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Voltar
                   </Button>
@@ -92,13 +92,13 @@ export default function VerContatoPage({
     <>
       <AppHeader title="Detalhes do Contato">
         <Link href={`/app/contatos/${id}/editar`}>
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
             <Pencil className="mr-2 h-4 w-4" />
             Editar
           </Button>
         </Link>
         <Link href="/app/contatos">
-          <Button variant="outline">
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>

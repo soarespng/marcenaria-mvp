@@ -135,7 +135,7 @@ export default function CriarImagemPage() {
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {loading ? "Salvando..." : "Criar Imagem"}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
+                <Button type="button" className="hover:bg-transparent cursor-pointer" variant="outline" onClick={() => router.back()} disabled={loading}>
                   Cancelar
                 </Button>
               </div>

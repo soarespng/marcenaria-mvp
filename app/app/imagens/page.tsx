@@ -121,16 +121,16 @@ export default function ImagensPage() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Link href={`/app/imagens/${imagem.id}`}>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" className="hover:bg-transparent cursor-pointer" size="icon">
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
                         <Link href={`/app/imagens/${imagem.id}/editar`}>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" className="hover:bg-transparent cursor-pointer" size="icon">
                             <Pencil className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Button variant="ghost" size="icon" onClick={() => setDeleteId(imagem.id)}>
+                        <Button variant="ghost" className="hover:bg-transparent cursor-pointer" size="icon" onClick={() => setDeleteId(imagem.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </div>

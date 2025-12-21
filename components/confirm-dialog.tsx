@@ -28,7 +28,7 @@ export function ConfirmDialog({ open, onOpenChange, onConfirm, title, descriptio
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel className="hover:bg-transparent cursor-pointer">Cancelar</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm}>Confirmar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
