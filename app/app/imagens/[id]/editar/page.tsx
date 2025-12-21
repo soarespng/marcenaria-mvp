@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import type { Produto } from "@/types"
 import { Button } from "@/components/ui/button"
@@ -11,11 +10,13 @@ import { Label } from "@/components/ui/label"
 import { AppHeader } from "@/components/app-header"
 import { Card, CardContent } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useToast } from "@/hooks/use-toast"
+import Link from "next/link"
 
-export default function EditarImagemPage({ params }: { params: { id: string } }) {
-  const { id } = params
+export default function EditarImagemPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
@@ -25,6 +26,7 @@ export default function EditarImagemPage({ params }: { params: { id: string } })
     url: "",
     ordem: 1,
   })
+  const { toast } = useToast()
 
   useEffect(() => {
     if (id) {
@@ -81,11 +83,20 @@ export default function EditarImagemPage({ params }: { params: { id: string } })
 
       if (error) throw error
 
+      toast({
+        title: "Sucesso",
+        description: "Imagem atualizada com sucesso!",
+      })
+
       await new Promise((resolve) => setTimeout(resolve, 500))
       router.push(`/app/imagens/${id}`)
     } catch (error) {
       console.error("Erro ao atualizar imagem:", error)
-      alert("Erro ao atualizar imagem. Tente novamente.")
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Erro ao atualizar imagem. Tente novamente.",
+      })
     } finally {
       setLoading(false)
     }
@@ -95,16 +106,20 @@ export default function EditarImagemPage({ params }: { params: { id: string } })
     return (
       <>
         <AppHeader title="Carregando..." />
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
       </>
     )
   }
 
   return (
     <>
-      <AppHeader title="Editar Imagem" />
+      <AppHeader title="Editar Imagem" >
+        <Link href="/app/imagens">
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+        </Link>
+      </AppHeader>
 
       <div className="p-6 max-w-2xl">
         <Card>

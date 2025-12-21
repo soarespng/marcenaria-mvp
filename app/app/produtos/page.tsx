@@ -61,7 +61,7 @@ export default function ProdutosPage() {
   return (
     <>
       <AppHeader title="Produtos">
-        <Link href="/app/produtos/criar" >
+        <Link href="/app/produtos/criar">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Novo Produto

@@ -14,6 +14,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import { MaskedInput } from "@/components/masked-input"
 import { isValidEmail, isValidPhone } from "@/lib/validators"
+import { useToast } from "@/hooks/use-toast"
 
 export default function CriarContatoPage() {
   const router = useRouter()
@@ -24,17 +25,26 @@ export default function CriarContatoPage() {
     numero: "",
     observacao: "",
   })
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!isValidEmail(formData.email)) {
-      alert("Email inválido")
+      toast({
+        variant: "destructive",
+        title: "Validação",
+        description: "Email inválido",
+      })
       return
     }
 
     if (formData.numero && !isValidPhone(formData.numero)) {
-      alert("Número de telefone inválido")
+      toast({
+        variant: "destructive",
+        title: "Validação",
+        description: "Número de telefone inválido",
+      })
       return
     }
 
@@ -48,11 +58,20 @@ export default function CriarContatoPage() {
         throw error
       }
 
+      toast({
+        title: "Sucesso",
+        description: "Contato criado com sucesso!",
+      })
+
       await new Promise((resolve) => setTimeout(resolve, 500))
       router.push("/app/contatos")
     } catch (error) {
       console.error("Erro ao criar contato:", error)
-      alert("Erro ao criar contato. Tente novamente.")
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Erro ao criar contato. Tente novamente.",
+      })
       setLoading(false)
     }
   }

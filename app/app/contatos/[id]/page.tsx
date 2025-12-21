@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import type { ContatoSimples } from "@/types"
@@ -18,9 +18,9 @@ function isValidUUID(id: string): boolean {
 export default function VerContatoPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const { id } = params
+  const { id } = use(params)
   const router = useRouter()
   const [contato, setContato] = useState<ContatoSimples | null>(null)
   const [loading, setLoading] = useState(true)

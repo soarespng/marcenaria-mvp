@@ -10,7 +10,6 @@ import { Eye, Trash2, Loader2, Users, Pencil, Plus } from "lucide-react"
 import Link from "next/link"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 
-
 export default function ContatosPage() {
   const [contatos, setContatos] = useState<ContatoSimples[]>([])
   const [loading, setLoading] = useState(true)

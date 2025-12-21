@@ -6,7 +6,7 @@ import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { X, Upload, Loader2 } from "lucide-react"
+import { X, Upload, Loader2, ArrowUp, ArrowDown } from "lucide-react"
 import Image from "next/image"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -66,6 +66,15 @@ export function ImageUpload({ produtoId, images, onChange, maxImages = 5 }: Imag
         } = supabase.storage.from("produtos").getPublicUrl(data.path)
 
         uploadedUrls.push(publicUrl)
+
+        if (produtoId) {
+          const ordem = safeImages.length + uploadedUrls.length - 1
+          await supabase.from("produto_imagens").insert({
+            produto_id: produtoId,
+            url: publicUrl,
+            ordem: ordem,
+          })
+        }
       }
 
       onChange([...safeImages, ...uploadedUrls])
@@ -80,6 +89,11 @@ export function ImageUpload({ produtoId, images, onChange, maxImages = 5 }: Imag
 
   const removeImage = async (url: string, index: number) => {
     try {
+      if (produtoId) {
+        const supabase = createClient()
+        await supabase.from("produto_imagens").delete().eq("produto_id", produtoId).eq("url", url)
+      }
+
       // Extrair o nome do arquivo da URL
       const fileName = url.split("/").pop()
       if (fileName) {
@@ -92,6 +106,37 @@ export function ImageUpload({ produtoId, images, onChange, maxImages = 5 }: Imag
 
     const newImages = safeImages.filter((_, i) => i !== index)
     onChange(newImages)
+  }
+
+  const moveImageUp = (index: number) => {
+    if (index === 0) return
+    const newImages = [...safeImages]
+    ;[newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]]
+    onChange(newImages)
+
+    updateImageOrder(newImages)
+  }
+
+  const moveImageDown = (index: number) => {
+    if (index === safeImages.length - 1) return
+    const newImages = [...safeImages]
+    ;[newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]]
+    onChange(newImages)
+
+    updateImageOrder(newImages)
+  }
+
+  const updateImageOrder = async (orderedImages: string[]) => {
+    if (!produtoId) return
+
+    const supabase = createClient()
+    for (let i = 0; i < orderedImages.length; i++) {
+      await supabase
+        .from("produto_imagens")
+        .update({ ordem: i })
+        .eq("produto_id", produtoId)
+        .eq("url", orderedImages[i])
+    }
   }
 
   return (
@@ -139,6 +184,32 @@ export function ImageUpload({ produtoId, images, onChange, maxImages = 5 }: Imag
           {safeImages.map((url, index) => (
             <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border bg-muted">
               <Image src={url || "/placeholder.svg"} alt={`Imagem ${index + 1}`} fill className="object-cover" />
+
+              <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => moveImageUp(index)}
+                  disabled={index === 0}
+                  title="Mover para cima"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => moveImageDown(index)}
+                  disabled={index === safeImages.length - 1}
+                  title="Mover para baixo"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </Button>
+              </div>
+
               <Button
                 type="button"
                 variant="destructive"

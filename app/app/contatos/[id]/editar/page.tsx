@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -15,6 +14,7 @@ import { ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { MaskedInput } from "@/components/masked-input"
 import { isValidEmail, isValidPhone } from "@/lib/validators"
+import { useToast } from "@/hooks/use-toast"
 
 function isValidUUID(id: string): boolean {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -24,9 +24,9 @@ function isValidUUID(id: string): boolean {
 export default function EditarContatoPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const { id } = params
+  const { id } = use(params)
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -36,6 +36,7 @@ export default function EditarContatoPage({
     numero: "",
     observacao: "",
   })
+  const { toast } = useToast()
 
   useEffect(() => {
     if (id === "criar") {
@@ -75,12 +76,20 @@ export default function EditarContatoPage({
     e.preventDefault()
 
     if (!isValidEmail(formData.email)) {
-      alert("Email inválido")
+      toast({
+        variant: "destructive",
+        title: "Validação",
+        description: "Email inválido",
+      })
       return
     }
 
     if (formData.numero && !isValidPhone(formData.numero)) {
-      alert("Número de telefone inválido")
+      toast({
+        variant: "destructive",
+        title: "Validação",
+        description: "Número de telefone inválido",
+      })
       return
     }
 
@@ -98,10 +107,19 @@ export default function EditarContatoPage({
 
       if (error) throw error
 
+      toast({
+        title: "Sucesso",
+        description: "Contato atualizado com sucesso!",
+      })
+
       router.push(`/app/contatos/${id}`)
     } catch (error) {
       console.error("Erro ao atualizar contato:", error)
-      alert("Erro ao atualizar contato. Tente novamente.")
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Erro ao atualizar contato. Tente novamente.",
+      })
     } finally {
       setSaving(false)
     }
@@ -184,7 +202,7 @@ export default function EditarContatoPage({
                     Cancelar
                   </Button>
                 </Link>
-                <Button type="submit" disabled={saving} >
+                <Button type="submit" disabled={saving}>
                   {saving ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

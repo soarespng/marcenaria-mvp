@@ -1,12 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import type { ProdutoImagem, Produto } from "@/types"
 import { Button } from "@/components/ui/button"
 import { AppHeader } from "@/components/app-header"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Pencil, Loader2 } from "lucide-react"
+import { Pencil, Loader2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
@@ -15,8 +15,12 @@ interface ImagemComProduto extends ProdutoImagem {
   produto?: Produto
 }
 
-export default function VerImagemPage({ params }: { params: { id: string } }) {
-  const { id } = params
+export default function VerImagemPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = use(params)
   const router = useRouter()
   const [imagem, setImagem] = useState<ImagemComProduto | null>(null)
   const [loading, setLoading] = useState(true)
@@ -79,6 +83,13 @@ export default function VerImagemPage({ params }: { params: { id: string } }) {
           <Button>
             <Pencil className="mr-2 h-4 w-4" />
             Editar
+          </Button>
+        </Link>
+
+        <Link href="/app/imagens">
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
           </Button>
         </Link>
       </AppHeader>

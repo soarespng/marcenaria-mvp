@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import type { Contato } from "@/types"
 import { Button } from "@/components/ui/button"
@@ -12,9 +12,9 @@ import Link from "next/link"
 export default function VerOrcamentoPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const { id } = params
+  const { id } = use(params)
   const [orcamento, setOrcamento] = useState<Contato | null>(null)
   const [loading, setLoading] = useState(true)
 

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { use } from "react"
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import type { ProdutoComImagens, Categoria } from "@/types"
@@ -17,13 +17,14 @@ import { ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ImageUpload } from "@/components/image-upload"
+import { useToast } from "@/hooks/use-toast"
 
 export default function EditarProdutoPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const { id } = params
+  const { id } = use(params)
   const [produto, setProduto] = useState<ProdutoComImagens | null>(null)
   const [nome, setNome] = useState("")
   const [descricao, setDescricao] = useState("")
@@ -36,6 +37,7 @@ export default function EditarProdutoPage({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const { toast } = useToast()
 
   useEffect(() => {
     if (id === "criar") {
@@ -107,7 +109,11 @@ export default function EditarProdutoPage({
         .eq("id", id)
 
       if (updateError) {
-        setError(updateError.message)
+        toast({
+          variant: "destructive",
+          title: "Erro ao salvar",
+          description: updateError.message,
+        })
         setSaving(false)
         return
       }
@@ -128,11 +134,20 @@ export default function EditarProdutoPage({
         }
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      toast({
+        title: "Sucesso",
+        description: "Produto atualizado com sucesso!",
+      })
 
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      router.refresh()
       router.push(`/app/produtos/${id}`)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao salvar produto")
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: err instanceof Error ? err.message : "Erro ao salvar produto",
+      })
     } finally {
       setSaving(false)
     }
@@ -175,7 +190,7 @@ export default function EditarProdutoPage({
   return (
     <>
       <AppHeader title="Editar Produto">
-        <Link href={`/app/produtos/${id}`}>
+        <Link href={`/app/produtos/`}>
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar

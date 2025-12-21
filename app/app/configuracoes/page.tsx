@@ -14,14 +14,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { applyPhoneMask } from "@/lib/validators"
 import { AppHeader } from "@/components/app-header"
 import { useConfig } from "@/hooks/use-config"
-import { Loader2 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { Upload, X, LinkIcon } from "lucide-react"
 
 export default function ConfiguracoesPage() {
   const router = useRouter()
   const { refresh: refreshConfig } = useConfig()
+  const { toast } = useToast()
   const [config, setConfig] = useState<Configuracoes | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploadMode, setUploadMode] = useState<"url" | "file">("url")
+  const [uploading, setUploading] = useState(false)
   const [formData, setFormData] = useState({
     nome_empresa: "",
     telefone: "",
@@ -48,7 +52,11 @@ export default function ConfiguracoesPage() {
       const configData = Array.isArray(data) ? data[0] : data
 
       if (!configData) {
-        alert("Nenhuma configuração encontrada. Entre em contato com o administrador.")
+        toast({
+          variant: "destructive",
+          title: "Erro",
+          description: "Nenhuma configuração encontrada. Entre em contato com o administrador.",
+        })
         return
       }
 
@@ -66,17 +74,92 @@ export default function ConfiguracoesPage() {
       })
     } catch (error: any) {
       console.error("Erro ao carregar configurações:", error.message)
-      alert("Erro ao carregar configurações: " + error.message)
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar",
+        description: error.message,
+      })
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validar tipo de arquivo
+    if (!file.type.startsWith("image/")) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Por favor, selecione um arquivo de imagem",
+      })
+      return
+    }
+
+    // Validar tamanho (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "A imagem deve ter no máximo 5MB",
+      })
+      return
+    }
+
+    setUploading(true)
+
+    try {
+      const supabase = createClient()
+      const fileExt = file.name.split(".").pop()
+      const fileName = `logo-${Date.now()}.${fileExt}`
+      const filePath = `logos/${fileName}`
+
+      // Upload para o Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage.from("public").upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      })
+
+      if (uploadError) throw uploadError
+
+      // Obter URL pública
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("public").getPublicUrl(filePath)
+
+      setFormData({ ...formData, logo_url: publicUrl })
+
+      toast({
+        title: "Sucesso",
+        description: "Logo enviada com sucesso!",
+      })
+    } catch (error: any) {
+      console.error("Erro no upload:", error)
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: error.message || "Erro ao enviar arquivo",
+      })
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleRemoveLogo = () => {
+    setFormData({ ...formData, logo_url: "" })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!formData.nome_empresa.trim()) {
-      alert("Nome da empresa é obrigatório")
+      toast({
+        variant: "destructive",
+        title: "Validação",
+        description: "Nome da empresa é obrigatório",
+      })
       return
     }
 
@@ -103,12 +186,19 @@ export default function ConfiguracoesPage() {
 
       if (error) throw error
 
-      alert("Configurações salvas com sucesso!")
+      toast({
+        title: "Sucesso",
+        description: "Configurações salvas com sucesso!",
+      })
       await loadConfig()
       refreshConfig()
     } catch (error: any) {
       console.error("Erro ao salvar:", error.message)
-      alert("Erro ao salvar configurações")
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Erro ao salvar configurações",
+      })
     } finally {
       setSaving(false)
     }
@@ -121,8 +211,11 @@ export default function ConfiguracoesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-2xl">⏳</div>
+          <p className="mt-2">Carregando configurações...</p>
+        </div>
       </div>
     )
   }
@@ -130,6 +223,9 @@ export default function ConfiguracoesPage() {
   return (
     <>
       <AppHeader title="Configurações">
+        <Button variant="outline" onClick={() => router.push("/app/produtos")}>
+          ← Voltar
+        </Button>
       </AppHeader>
 
       <div className="p-6">
@@ -155,23 +251,78 @@ export default function ConfiguracoesPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="logo_url">URL da Logo</Label>
-                  <Input
-                    id="logo_url"
-                    type="url"
-                    value={formData.logo_url}
-                    onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                    placeholder="https://exemplo.com/logo.png"
-                  />
+                  <Label>Logo da Empresa</Label>
+
+                  <div className="flex gap-2 mb-3">
+                    <Button
+                      type="button"
+                      variant={uploadMode === "url" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setUploadMode("url")}
+                      className="flex items-center gap-2"
+                    >
+                      <LinkIcon className="h-4 w-4" />
+                      URL
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={uploadMode === "file" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setUploadMode("file")}
+                      className="flex items-center gap-2"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Arquivo
+                    </Button>
+                  </div>
+
+                  {uploadMode === "url" && (
+                    <Input
+                      id="logo_url"
+                      type="url"
+                      value={formData.logo_url}
+                      onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                      placeholder="https://exemplo.com/logo.png"
+                    />
+                  )}
+
+                  {uploadMode === "file" && (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="logo_file"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        disabled={uploading}
+                        className="flex-1"
+                      />
+                      {uploading && <span className="text-sm text-muted-foreground">Enviando...</span>}
+                    </div>
+                  )}
+
                   {formData.logo_url && (
-                    <div className="mt-2">
+                    <div className="mt-3 p-4 border rounded-lg bg-muted/20">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium">Preview:</p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleRemoveLogo}
+                          className="h-8 w-8 p-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
                       <img
                         src={formData.logo_url || "/placeholder.svg"}
                         alt="Preview da logo"
-                        className="h-16 object-contain"
+                        className="h-20 object-contain bg-white p-2 rounded"
                       />
                     </div>
                   )}
+
+                  <p className="text-xs text-muted-foreground">Formatos aceitos: PNG, JPG, SVG. Tamanho máximo: 5MB</p>
                 </div>
 
                 <div className="space-y-2">
@@ -197,16 +348,16 @@ export default function ConfiguracoesPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email_contato">Email de contato</Label>
+                  <Label htmlFor="endereco">E-mail para contato</Label>
                   <Textarea
                     id="email_contato"
                     value={formData.email_contato}
                     onChange={(e) => setFormData({ ...formData, email_contato: e.target.value })}
-                    placeholder="email@contato.com.br"
+                    placeholder="Email@contato.com.br"
                     rows={3}
                   />
                 </div>
-
+                
                 <div className="space-y-2">
                   <Label htmlFor="horario_funcionamento">Horário de Funcionamento</Label>
                   <Textarea
@@ -296,7 +447,6 @@ export default function ConfiguracoesPage() {
                 </div>
               </div>
 
-              {/* Preview das cores */}
               <div className="mt-6 p-4 border rounded-lg">
                 <p className="text-sm font-medium mb-3">Preview:</p>
                 <div className="flex gap-3">
