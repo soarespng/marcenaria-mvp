@@ -919,7 +919,7 @@ Aguardo retorno. Obrigado!`
       )}
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-[90vw] h-[90vh] overflow-hidden p-0 flex flex-col">
+        <DialogContent className="min-w-[75vw] h-[90vh] overflow-hidden p-0 flex flex-col">
           <button
             onClick={() => setModalOpen(false)}
             className="absolute top-4 left-4 z-50 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 backdrop-blur-sm"
