@@ -30,7 +30,6 @@ export default function ConfiguracoesPage() {
     nome_empresa: "",
     telefone: "",
     endereco: "",
-    email_contato: "",
     horario_funcionamento: "",
     logo_url: "",
     cor_primaria: "#0ea5e9",
@@ -65,7 +64,6 @@ export default function ConfiguracoesPage() {
         nome_empresa: configData.nome_empresa || "",
         telefone: configData.telefone || "",
         endereco: configData.endereco || "",
-        email_contato: configData.email_contato || "",
         horario_funcionamento: configData.horario_funcionamento || "",
         logo_url: configData.logo_url || "",
         cor_primaria: configData.cor_primaria || "#0ea5e9",
@@ -116,11 +114,15 @@ export default function ConfiguracoesPage() {
       const fileName = `logo-${Date.now()}.${fileExt}`
       const filePath = `logos/${fileName}`
 
+      console.log("[v0] Iniciando upload:", { fileName, filePath, fileSize: file.size })
+
       // Upload para o Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage.from("public").upload(filePath, file, {
         cacheControl: "3600",
         upsert: false,
       })
+
+      console.log("[v0] Resultado do upload:", { uploadData, uploadError })
 
       if (uploadError) throw uploadError
 
@@ -129,6 +131,8 @@ export default function ConfiguracoesPage() {
         data: { publicUrl },
       } = supabase.storage.from("public").getPublicUrl(filePath)
 
+      console.log("[v0] URL pública gerada:", publicUrl)
+
       setFormData({ ...formData, logo_url: publicUrl })
 
       toast({
@@ -136,7 +140,7 @@ export default function ConfiguracoesPage() {
         description: "Logo enviada com sucesso!",
       })
     } catch (error: any) {
-      console.error("Erro no upload:", error)
+      console.error("[v0] Erro no upload:", error)
       toast({
         variant: "destructive",
         title: "Erro",
@@ -174,7 +178,6 @@ export default function ConfiguracoesPage() {
           nome_empresa: formData.nome_empresa,
           telefone: formData.telefone || null,
           endereco: formData.endereco || null,
-          email_contato: formData.email_contato || null,
           horario_funcionamento: formData.horario_funcionamento || null,
           logo_url: formData.logo_url || null,
           cor_primaria: formData.cor_primaria,
@@ -347,17 +350,6 @@ export default function ConfiguracoesPage() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="endereco">E-mail para contato</Label>
-                  <Textarea
-                    id="email_contato"
-                    value={formData.email_contato}
-                    onChange={(e) => setFormData({ ...formData, email_contato: e.target.value })}
-                    placeholder="Email@contato.com.br"
-                    rows={3}
-                  />
-                </div>
-                
                 <div className="space-y-2">
                   <Label htmlFor="horario_funcionamento">Horário de Funcionamento</Label>
                   <Textarea

@@ -137,8 +137,6 @@ type Toast = Omit<ToasterToast, "id">
 function toast({ ...props }: Toast) {
   const id = genId()
 
-  console.log("[v0] Toast chamado com props:", props)
-
   const update = (props: ToasterToast) =>
     dispatch({
       type: "UPDATE_TOAST",
@@ -157,8 +155,6 @@ function toast({ ...props }: Toast) {
       },
     },
   })
-
-  console.log("[v0] Toast adicionado ao estado, id:", id)
 
   return {
     id: id,

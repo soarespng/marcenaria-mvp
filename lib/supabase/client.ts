@@ -3,45 +3,36 @@ export function createClient() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error(
-      "[v0] Erro: Variáveis de ambiente do Supabase não configuradas. Configure NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY no arquivo .env.local",
-    )
+    const mockQueryBuilder: any = {
+      eq: function (column: string, value: any) {
+        return this
+      },
+      order: function (column: string, options?: any) {
+        return this
+      },
+      limit: function (count: number) {
+        return this
+      },
+      single: async () => ({ data: null, error: { message: "Supabase não configurado" } }),
+      maybeSingle: async () => ({ data: null, error: { message: "Supabase não configurado" } }),
+      then: async (resolve: any) => resolve({ data: [], error: null }),
+    }
 
-    // Retornar um cliente mock para evitar crashes
     return {
       from: () => ({
-        select: () => ({
-          eq: () => ({
-            single: async () => ({ data: null, error: { message: "Supabase não configurado" } }),
-            maybeSingle: async () => ({ data: null, error: { message: "Supabase não configurado" } }),
-            then: async (resolve: any) => resolve({ data: null, error: { message: "Supabase não configurado" } }),
-          }),
-          order: () => ({
-            then: async (resolve: any) => resolve({ data: [], error: { message: "Supabase não configurado" } }),
-          }),
-          then: async (resolve: any) => resolve({ data: [], error: { message: "Supabase não configurado" } }),
-        }),
+        select: () => mockQueryBuilder,
         insert: () => ({
-          select: () => ({
-            single: async () => ({ data: null, error: { message: "Supabase não configurado" } }),
-            then: async (resolve: any) => resolve({ data: null, error: { message: "Supabase não configurado" } }),
-          }),
+          select: () => mockQueryBuilder,
           then: async (resolve: any) => resolve({ data: null, error: { message: "Supabase não configurado" } }),
         }),
         update: () => ({
-          eq: () => ({
-            then: async (resolve: any) => resolve({ data: null, error: { message: "Supabase não configurado" } }),
-          }),
+          eq: () => mockQueryBuilder,
         }),
         delete: () => ({
-          eq: () => ({
-            then: async (resolve: any) => resolve({ data: null, error: { message: "Supabase não configurado" } }),
-          }),
+          eq: () => mockQueryBuilder,
         }),
       }),
-      rpc: () => ({
-        then: async (resolve: any) => resolve({ data: null, error: { message: "Supabase não configurado" } }),
-      }),
+      rpc: () => mockQueryBuilder,
       storage: {
         from: () => ({
           upload: async () => ({ data: null, error: { message: "Supabase não configurado" } }),
@@ -54,11 +45,46 @@ export function createClient() {
 
   return {
     from: (table: string) => ({
-      select: (columns = "*") => ({
-        eq: (column: string, value: any) => ({
+      select: (columns = "*") => {
+        const queryParams: Record<string, string> = {}
+
+        const buildUrl = () => {
+          const cleanColumns = columns.replace(/\s+/g, "")
+          const params = new URLSearchParams({ select: cleanColumns, ...queryParams })
+          return `${supabaseUrl}/rest/v1/${table}?${params.toString()}`
+        }
+
+        const queryBuilder = {
+          eq: (column: string, value: any) => {
+            queryParams[column] = `eq.${value}`
+            return queryBuilder // Retorna o próprio queryBuilder para permitir encadeamento
+          },
+          order: (column: string, options?: { ascending?: boolean }) => {
+            const ascending = options?.ascending !== false
+            queryParams.order = `${column}.${ascending ? "asc" : "desc"}`
+            return queryBuilder // Retorna o próprio queryBuilder para permitir encadeamento
+          },
+          limit: (count: number) => {
+            queryParams.limit = String(count)
+            return queryBuilder // Retorna o próprio queryBuilder para permitir encadeamento
+          },
+          async then(resolve: any) {
+            const url = buildUrl()
+            const response = await fetch(url, {
+              headers: {
+                apikey: supabaseAnonKey,
+                Authorization: `Bearer ${supabaseAnonKey}`,
+              },
+            })
+            const data = await response.json()
+            if (!response.ok) {
+              resolve({ data: null, error: data })
+            } else {
+              resolve({ data, error: null })
+            }
+          },
           single: async () => {
-            const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-            const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}&${column}=eq.${value}`
+            const url = buildUrl()
             const response = await fetch(url, {
               headers: {
                 apikey: supabaseAnonKey,
@@ -76,8 +102,7 @@ export function createClient() {
             return { data, error: null }
           },
           maybeSingle: async () => {
-            const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-            const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}&${column}=eq.${value}`
+            const url = buildUrl()
             const response = await fetch(url, {
               headers: {
                 apikey: supabaseAnonKey,
@@ -93,82 +118,16 @@ export function createClient() {
             const data = await response.json()
             return { data: data[0] || null, error: null }
           },
-          async then(resolve: any) {
-            const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-            const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}&${column}=eq.${value}`
-            const response = await fetch(url, {
-              headers: {
-                apikey: supabaseAnonKey,
-                Authorization: `Bearer ${supabaseAnonKey}`,
-              },
-            })
-            const data = await response.json()
-            if (!response.ok) {
-              resolve({ data: null, error: data })
-            } else {
-              resolve({ data, error: null })
-            }
-          },
-        }),
-        limit: (count: number) => ({
-          async then(resolve: any) {
-            const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-            const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}&limit=${count}`
-            const response = await fetch(url, {
-              headers: {
-                apikey: supabaseAnonKey,
-                Authorization: `Bearer ${supabaseAnonKey}`,
-              },
-            })
-            const data = await response.json()
-            if (!response.ok) {
-              resolve({ data: null, error: data })
-            } else {
-              resolve({ data, error: null })
-            }
-          },
-        }),
-        order: (column: string, options?: { ascending?: boolean }) => ({
-          async then(resolve: any) {
-            const ascending = options?.ascending !== false
-            const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-            const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}&order=${column}.${ascending ? "asc" : "desc"}`
-            const response = await fetch(url, {
-              headers: {
-                apikey: supabaseAnonKey,
-                Authorization: `Bearer ${supabaseAnonKey}`,
-              },
-            })
-            const data = await response.json()
-            if (!response.ok) {
-              resolve({ data: null, error: data })
-            } else {
-              resolve({ data, error: null })
-            }
-          },
-        }),
-        async then(resolve: any) {
-          const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-          const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}`
-          const response = await fetch(url, {
-            headers: {
-              apikey: supabaseAnonKey,
-              Authorization: `Bearer ${supabaseAnonKey}`,
-            },
-          })
-          const data = await response.json()
-          if (!response.ok) {
-            resolve({ data: null, error: data })
-          } else {
-            resolve({ data, error: null })
-          }
-        },
-      }),
+        }
+
+        return queryBuilder
+      },
       insert: (values: any) => ({
         select: (columns = "*") => ({
           single: async () => {
-            const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-            const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}`
+            const cleanColumns = columns.replace(/\s+/g, "")
+            const params = new URLSearchParams({ select: cleanColumns })
+            const url = `${supabaseUrl}/rest/v1/${table}?${params.toString()}`
             const response = await fetch(url, {
               method: "POST",
               headers: {
@@ -190,8 +149,9 @@ export function createClient() {
             return { data, error: null }
           },
           async then(resolve: any) {
-            const encodedColumns = encodeURIComponent(columns.replace(/\s+/g, ""))
-            const url = `${supabaseUrl}/rest/v1/${table}?select=${encodedColumns}`
+            const cleanColumns = columns.replace(/\s+/g, "")
+            const params = new URLSearchParams({ select: cleanColumns })
+            const url = `${supabaseUrl}/rest/v1/${table}?${params.toString()}`
             const response = await fetch(url, {
               method: "POST",
               headers: {
@@ -295,14 +255,28 @@ export function createClient() {
     }),
     storage: {
       from: (bucket: string) => ({
-        upload: async (path: string, file: File) => {
+        upload: async (path: string, file: File, options?: { cacheControl?: string; upsert?: boolean }) => {
           const url = `${supabaseUrl}/storage/v1/object/${bucket}/${path}`
+
+          const formData = new FormData()
+          formData.append("", file)
+
+          const headers: Record<string, string> = {
+            apikey: supabaseAnonKey,
+            Authorization: `Bearer ${supabaseAnonKey}`,
+          }
+
+          if (options?.cacheControl) {
+            headers["cache-control"] = options.cacheControl
+          }
+
+          if (options?.upsert) {
+            headers["x-upsert"] = "true"
+          }
+
           const response = await fetch(url, {
             method: "POST",
-            headers: {
-              apikey: supabaseAnonKey,
-              Authorization: `Bearer ${supabaseAnonKey}`,
-            },
+            headers,
             body: file,
           })
 
@@ -312,7 +286,7 @@ export function createClient() {
           }
 
           const data = await response.json()
-          return { data: { path }, error: null }
+          return { data: { path, ...data }, error: null }
         },
         remove: async (paths: string[]) => {
           const url = `${supabaseUrl}/storage/v1/object/${bucket}`
