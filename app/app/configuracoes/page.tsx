@@ -15,7 +15,7 @@ import { applyPhoneMask } from "@/lib/validators"
 import { AppHeader } from "@/components/app-header"
 import { useConfig } from "@/hooks/use-config"
 import { useToast } from "@/hooks/use-toast"
-import { Upload, X, LinkIcon } from "lucide-react"
+import { Upload, X, LinkIcon, ArrowLeft } from "lucide-react"
 
 export default function ConfiguracoesPage() {
   const router = useRouter()
@@ -302,7 +302,8 @@ export default function ConfiguracoesPage() {
     <>
       <AppHeader title="Configurações">
         <Button variant="outline" onClick={() => router.push("/app/produtos")}>
-          ← Voltar
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar
         </Button>
       </AppHeader>
 
