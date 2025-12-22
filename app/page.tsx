@@ -422,7 +422,7 @@ Aguardo retorno. Obrigado!`
                 <Button
                   size="lg"
                   style={{ "--hover-color": config?.cor_secundaria } as React.CSSProperties}
-                  className="text-(--hover-color) px-8 bg-white/80 backdrop-blur shadow-lg hover:bg-(--hover-color) hover:text-white"
+                  className="text-(--hover-color) px-8 bg-white/80 backdrop-blur cursor-pointer shadow-lg hover:bg-(--hover-color) hover:text-white"
                 >
                   <Link
                     href="#contato">
@@ -804,10 +804,10 @@ Aguardo retorno. Obrigado!`
                                 Enviando...
                               </>
                             ) : (
-                              <>
-                                <Mail className="mr-2 h-4 w-4" />
+                              <span className="cursor-pointer">
+                                <Mail className="mr-2 h-4 w-4 " />
                                 Enviar Mensagem
-                              </>
+                              </span>
                             )}
                           </Button>
                         </form>
