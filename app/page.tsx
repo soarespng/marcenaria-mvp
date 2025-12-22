@@ -372,18 +372,38 @@ Aguardo retorno. Obrigado!`
           {/* Hero Section */}
           <section
             className="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
-            style={{
-              background:
-                config?.cor_primaria && config?.cor_secundaria
-                  ? `linear-gradient(135deg, ${config.cor_secundaria} 0%, ${config.cor_primaria}15 50%, ${config.cor_secundaria} 100%)`
-                  : "linear-gradient(135deg, #fef3c7 0%, #78350f15 50%, #fef3c7 100%)",
-            }}
+            style={
+              config?.header_imagem_url
+                ? {
+                    backgroundImage: `url(${config.header_imagem_url})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }
+                : {
+                    background:
+                      config?.cor_primaria && config?.cor_secundaria
+                        ? `linear-gradient(135deg, ${config.cor_secundaria} 0%, ${config.cor_primaria}15 50%, ${config.cor_secundaria} 100%)`
+                        : "linear-gradient(135deg, #fef3c7 0%, #78350f15 50%, #fef3c7 100%)",
+                  }
+            }
           >
+            {config?.header_imagem_url && <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />}
             <div className="container relative z-10 px-4 py-20 mx-auto text-center">
-              <h1 className="mb-6 text-4xl font-bold leading-tight text-balance md:text-6xl lg:text-7xl">
+              <h1
+                className="mb-6 text-4xl font-bold leading-tight text-balance md:text-6xl lg:text-7xl"
+                style={config?.header_imagem_url ? { color: "#fff", textShadow: "0 2px 10px rgba(0,0,0,0.5)" } : {}}
+              >
                 Móveis de Madeira Artesanais e Únicos
               </h1>
-              <p className="mb-8 text-lg text-muted-foreground text-pretty md:text-xl">
+              <p
+                className="mb-8 text-lg text-pretty md:text-xl"
+                style={
+                  config?.header_imagem_url
+                    ? { color: "#fff", textShadow: "0 2px 10px rgba(0,0,0,0.5)" }
+                    : { color: "var(--muted-foreground)" }
+                }
+              >
                 Criamos peças exclusivas com madeira de qualidade, unindo tradição e design moderno para transformar seu
                 espaço.
               </p>
@@ -401,13 +421,10 @@ Aguardo retorno. Obrigado!`
                 </Button>
                 <Button
                   size="lg"
-                  className="text-base px-8 shadow-lg"
-                  style={{
-                    backgroundColor: config?.cor_secundaria || "#78350f",
-                    color: "#fff",
-                  }}
+                  style={{ "--hover-color": config?.cor_primaria } as React.CSSProperties}
+                  className="text-(--hover-color) px-8 bg-white/80 backdrop-blur shadow-lg hover:bg-(--hover-color) hover:text-white"
                 >
-                  <Link href="#contato">Faça um orçamento</Link>
+                  Faça um orçamento
                 </Button>
               </div>
             </div>
@@ -635,7 +652,7 @@ Aguardo retorno. Obrigado!`
 
                           <div className="grid grid-cols-2 gap-2">
                             <Button
-                              className="w-full bg-transparent"
+                              className="w-full bg-transparent hover:bg-transparent cursor-pointer"
                               size="sm"
                               variant="outline"
                               onClick={() => abrirDetalhes(produto as ProdutoComImagens)}
@@ -647,7 +664,7 @@ Aguardo retorno. Obrigado!`
                               Ver Detalhes
                             </Button>
                             <Button
-                              className="w-full"
+                              className="w-full cursor-pointer"
                               size="sm"
                               onClick={() => solicitarOrcamento(produto)}
                               style={{
@@ -1052,7 +1069,6 @@ Aguardo retorno. Obrigado!`
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Disponibilidade</p>
                   <div
                     className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
                       produtoDetalhes && produtoDetalhes.estoque > 0
@@ -1083,17 +1099,12 @@ Aguardo retorno. Obrigado!`
                       <span className="text-muted-foreground">Estoque: </span>
                       <span className="font-medium">{produtoDetalhes?.estoque || 0}</span>
                     </div>
-                    {produtoDetalhes?.imagens && produtoDetalhes.imagens.length > 0 && (
-                      <div>
-                        <span className="text-muted-foreground">Fotos: </span>
-                        <span className="font-medium">{produtoDetalhes.imagens.length}</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Botão de ação inline */}
                   <Button
                     size="sm"
+                    className="cursor-pointer"
                     onClick={() => {
                       if (produtoDetalhes) {
                         solicitarOrcamento(produtoDetalhes)

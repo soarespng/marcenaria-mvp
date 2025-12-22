@@ -25,13 +25,17 @@ export default function ConfiguracoesPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploadMode, setUploadMode] = useState<"url" | "file">("url")
+  const [headerUploadMode, setHeaderUploadMode] = useState<"url" | "file">("url")
   const [uploading, setUploading] = useState(false)
+  const [uploadingHeader, setUploadingHeader] = useState(false)
   const [formData, setFormData] = useState({
     nome_empresa: "",
     telefone: "",
+    email_contato: "",
     endereco: "",
     horario_funcionamento: "",
     logo_url: "",
+    header_imagem_url: "",
     cor_primaria: "#0ea5e9",
     cor_secundaria: "#1e293b",
     cor_destaque: "#f59e0b",
@@ -63,9 +67,11 @@ export default function ConfiguracoesPage() {
       setFormData({
         nome_empresa: configData.nome_empresa || "",
         telefone: configData.telefone || "",
+        email_contato: configData.email_contato || "",
         endereco: configData.endereco || "",
         horario_funcionamento: configData.horario_funcionamento || "",
         logo_url: configData.logo_url || "",
+        header_imagem_url: configData.header_imagem_url || "",
         cor_primaria: configData.cor_primaria || "#0ea5e9",
         cor_secundaria: configData.cor_secundaria || "#1e293b",
         cor_destaque: configData.cor_destaque || "#f59e0b",
@@ -86,7 +92,6 @@ export default function ConfiguracoesPage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validar tipo de arquivo
     if (!file.type.startsWith("image/")) {
       toast({
         variant: "destructive",
@@ -96,7 +101,6 @@ export default function ConfiguracoesPage() {
       return
     }
 
-    // Validar tamanho (5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         variant: "destructive",
@@ -114,24 +118,23 @@ export default function ConfiguracoesPage() {
       const fileName = `logo-${Date.now()}.${fileExt}`
       const filePath = `logos/${fileName}`
 
-      console.log("[v0] Iniciando upload:", { fileName, filePath, fileSize: file.size })
-
-      // Upload para o Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage.from("public").upload(filePath, file, {
         cacheControl: "3600",
         upsert: false,
       })
 
-      console.log("[v0] Resultado do upload:", { uploadData, uploadError })
+      if (uploadError) {
+        if (uploadError.message?.includes("Bucket not found")) {
+          throw new Error(
+            "O bucket de storage 'public' não existe. Execute o script 008_create_public_bucket.sql no painel Scripts.",
+          )
+        }
+        throw uploadError
+      }
 
-      if (uploadError) throw uploadError
-
-      // Obter URL pública
       const {
         data: { publicUrl },
       } = supabase.storage.from("public").getPublicUrl(filePath)
-
-      console.log("[v0] URL pública gerada:", publicUrl)
 
       setFormData({ ...formData, logo_url: publicUrl })
 
@@ -140,10 +143,10 @@ export default function ConfiguracoesPage() {
         description: "Logo enviada com sucesso!",
       })
     } catch (error: any) {
-      console.error("[v0] Erro no upload:", error)
+      console.error("Erro no upload:", error)
       toast({
         variant: "destructive",
-        title: "Erro",
+        title: "Erro no upload",
         description: error.message || "Erro ao enviar arquivo",
       })
     } finally {
@@ -151,8 +154,78 @@ export default function ConfiguracoesPage() {
     }
   }
 
+  const handleHeaderImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Por favor, selecione um arquivo de imagem",
+      })
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "A imagem deve ter no máximo 5MB",
+      })
+      return
+    }
+
+    setUploadingHeader(true)
+
+    try {
+      const supabase = createClient()
+      const fileExt = file.name.split(".").pop()
+      const fileName = `header-${Date.now()}.${fileExt}`
+      const filePath = `headers/${fileName}`
+
+      const { data: uploadData, error: uploadError } = await supabase.storage.from("public").upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      })
+
+      if (uploadError) {
+        if (uploadError.message?.includes("Bucket not found")) {
+          throw new Error(
+            "O bucket de storage 'public' não existe. Execute o script 008_create_public_bucket.sql no painel Scripts.",
+          )
+        }
+        throw uploadError
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("public").getPublicUrl(filePath)
+
+      setFormData({ ...formData, header_imagem_url: publicUrl })
+
+      toast({
+        title: "Sucesso",
+        description: "Imagem de header enviada com sucesso!",
+      })
+    } catch (error: any) {
+      console.error("Erro no upload:", error)
+      toast({
+        variant: "destructive",
+        title: "Erro no upload",
+        description: error.message || "Erro ao enviar arquivo",
+      })
+    } finally {
+      setUploadingHeader(false)
+    }
+  }
+
   const handleRemoveLogo = () => {
     setFormData({ ...formData, logo_url: "" })
+  }
+
+  const handleRemoveHeaderImage = () => {
+    setFormData({ ...formData, header_imagem_url: "" })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -177,9 +250,11 @@ export default function ConfiguracoesPage() {
         .update({
           nome_empresa: formData.nome_empresa,
           telefone: formData.telefone || null,
+          email_contato: formData.email_contato || null,
           endereco: formData.endereco || null,
           horario_funcionamento: formData.horario_funcionamento || null,
           logo_url: formData.logo_url || null,
+          header_imagem_url: formData.header_imagem_url || null,
           cor_primaria: formData.cor_primaria,
           cor_secundaria: formData.cor_secundaria,
           cor_destaque: formData.cor_destaque,
@@ -226,7 +301,7 @@ export default function ConfiguracoesPage() {
   return (
     <>
       <AppHeader title="Configurações">
-        <Button variant="outline" className="hover:bg-transparent cursor-pointer" onClick={() => router.push("/app/produtos")}>
+        <Button variant="outline" onClick={() => router.push("/app/produtos")}>
           ← Voltar
         </Button>
       </AppHeader>
@@ -262,7 +337,7 @@ export default function ConfiguracoesPage() {
                       variant={uploadMode === "url" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setUploadMode("url")}
-                      className="flex items-center gap-2"
+                      className={`flex items-center gap-2 cursor-pointer ${uploadMode !== "url" ? "hover:bg-transparent" : ""}`}
                     >
                       <LinkIcon className="h-4 w-4" />
                       URL
@@ -272,7 +347,7 @@ export default function ConfiguracoesPage() {
                       variant={uploadMode === "file" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setUploadMode("file")}
-                      className="flex items-center gap-2"
+                      className={`flex items-center gap-2 cursor-pointer ${uploadMode !== "file" ? "hover:bg-transparent" : ""}`}
                     >
                       <Upload className="h-4 w-4" />
                       Arquivo
@@ -329,6 +404,86 @@ export default function ConfiguracoesPage() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>Imagem de Fundo do Header</Label>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    Se não definir uma imagem, será usado um gradiente com as cores configuradas
+                  </p>
+
+                  <div className="flex gap-2 mb-3">
+                    <Button
+                      type="button"
+                      variant={headerUploadMode === "url" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setHeaderUploadMode("url")}
+                      className={`flex items-center gap-2 cursor-pointer ${uploadMode !== "url" ? "hover:bg-transparent" : ""}`}
+                    >
+                      <LinkIcon className="h-4 w-4" />
+                      URL
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={headerUploadMode === "file" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setHeaderUploadMode("file")}
+                      className={`flex items-center gap-2 cursor-pointer ${uploadMode !== "file" ? "hover:bg-transparent" : ""}`}
+                    >
+                      <Upload className="h-4 w-4" />
+                      Arquivo
+                    </Button>
+                  </div>
+
+                  {headerUploadMode === "url" && (
+                    <Input
+                      id="header_imagem_url"
+                      type="url"
+                      value={formData.header_imagem_url}
+                      onChange={(e) => setFormData({ ...formData, header_imagem_url: e.target.value })}
+                      placeholder="https://exemplo.com/header.jpg"
+                    />
+                  )}
+
+                  {headerUploadMode === "file" && (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="header_image_file"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleHeaderImageUpload}
+                        disabled={uploadingHeader}
+                        className="flex-1"
+                      />
+                      {uploadingHeader && <span className="text-sm text-muted-foreground">Enviando...</span>}
+                    </div>
+                  )}
+
+                  {formData.header_imagem_url && (
+                    <div className="mt-3 p-4 border rounded-lg bg-muted/20">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-medium">Preview:</p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleRemoveHeaderImage}
+                          className="h-8 w-8 p-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <img
+                        src={formData.header_imagem_url || "/placeholder.svg"}
+                        alt="Preview da imagem de header"
+                        className="w-full h-32 object-cover rounded"
+                      />
+                    </div>
+                  )}
+
+                  <p className="text-xs text-muted-foreground">
+                    Recomendado: imagens em alta resolução (1920x1080 ou maior). Tamanho máximo: 5MB
+                  </p>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="telefone">Telefone de Contato</Label>
                   <Input
                     id="telefone"
@@ -336,6 +491,16 @@ export default function ConfiguracoesPage() {
                     onChange={handlePhoneChange}
                     placeholder="(11) 99999-9999"
                     maxLength={15}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email_contato">Email para Contato</Label>
+                  <Input
+                    id="email_contato"
+                    value={formData.email_contato}
+                    onChange={(e) => setFormData({ ...formData, email_contato: e.target.value })}
+                    placeholder="email@contato.com.br"
                   />
                 </div>
 

@@ -15,6 +15,7 @@ import Link from "next/link"
 import { MaskedInput } from "@/components/masked-input"
 import { isValidEmail, isValidPhone } from "@/lib/validators"
 import { useToast } from "@/hooks/use-toast"
+import { ArrowLeft } from "lucide-react"
 
 export default function CriarContatoPage() {
   const router = useRouter()
@@ -80,7 +81,10 @@ export default function CriarContatoPage() {
     <>
       <AppHeader title="Novo Contato">
         <Link href="/app/contatos">
-          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >← Voltar</Button>
+          <Button variant="outline" className="hover:bg-transparent cursor-pointer" >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
         </Link>
       </AppHeader>
 

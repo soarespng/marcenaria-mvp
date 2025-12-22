@@ -82,7 +82,7 @@ export function AppSidebar() {
           <p className="text-sm font-medium">{perfil?.nome || "Usuário"}</p>
           <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
         </div>
-        <Button variant="outline" className="w-full bg-transparent" onClick={signOut}>
+        <Button variant="outline" className="w-full bg-transparent hover:bg-transparent cursor-pointer" onClick={signOut}>
           <LogOut className="mr-2 h-4 w-4" />
           Sair
         </Button>

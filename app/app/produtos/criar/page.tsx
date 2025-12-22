@@ -88,6 +88,7 @@ export default function CriarProdutoPage() {
       <>
         <AppHeader title="Adicionar Imagens">
           <Button variant="outline" className="hover:bg-transparent cursor-pointer" onClick={handleFinalizarCriacao}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Finalizar e Voltar
           </Button>
         </AppHeader>

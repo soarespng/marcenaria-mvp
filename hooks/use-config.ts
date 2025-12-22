@@ -7,6 +7,7 @@ export interface Config {
   id: string
   nome_empresa: string
   logo_url?: string
+  header_imagem_url?: string
   telefone?: string
   endereco?: string
   email_contato?: string
