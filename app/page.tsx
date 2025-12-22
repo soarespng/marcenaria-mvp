@@ -790,7 +790,7 @@ Aguardo retorno. Obrigado!`
 
                           <Button
                             type="submit"
-                            className="w-full"
+                            className="w-full cursor-pointer"
                             size="lg"
                             disabled={enviando}
                             style={{
@@ -804,10 +804,10 @@ Aguardo retorno. Obrigado!`
                                 Enviando...
                               </>
                             ) : (
-                              <span className="cursor-pointer">
+                              <>
                                 <Mail className="mr-2 h-4 w-4 " />
                                 Enviar Mensagem
-                              </span>
+                              </>
                             )}
                           </Button>
                         </form>
