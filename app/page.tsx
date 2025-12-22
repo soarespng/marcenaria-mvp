@@ -375,17 +375,17 @@ Aguardo retorno. Obrigado!`
             style={
               config?.header_imagem_url
                 ? {
-                    backgroundImage: `url(${config.header_imagem_url})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                  }
+                  backgroundImage: `url(${config.header_imagem_url})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }
                 : {
-                    background:
-                      config?.cor_primaria && config?.cor_secundaria
-                        ? `linear-gradient(135deg, ${config.cor_secundaria} 0%, ${config.cor_primaria}15 50%, ${config.cor_secundaria} 100%)`
-                        : "linear-gradient(135deg, #fef3c7 0%, #78350f15 50%, #fef3c7 100%)",
-                  }
+                  background:
+                    config?.cor_primaria && config?.cor_secundaria
+                      ? `linear-gradient(135deg, ${config.cor_secundaria} 0%, ${config.cor_primaria}15 50%, ${config.cor_secundaria} 100%)`
+                      : "linear-gradient(135deg, #fef3c7 0%, #78350f15 50%, #fef3c7 100%)",
+                }
             }
           >
             {config?.header_imagem_url && <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />}
@@ -421,10 +421,13 @@ Aguardo retorno. Obrigado!`
                 </Button>
                 <Button
                   size="lg"
-                  style={{ "--hover-color": config?.cor_primaria } as React.CSSProperties}
+                  style={{ "--hover-color": config?.cor_secundaria } as React.CSSProperties}
                   className="text-(--hover-color) px-8 bg-white/80 backdrop-blur shadow-lg hover:bg-(--hover-color) hover:text-white"
                 >
-                  Faça um orçamento
+                  <Link
+                    href="#contato">
+                    Faça um orçamento
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -562,11 +565,11 @@ Aguardo retorno. Obrigado!`
                       produto.imagens?.length > 0
                         ? produto.imagens
                         : [
-                            {
-                              id: "placeholder",
-                              url: `/placeholder.svg?height=300&width=400&query=${encodeURIComponent(produto.nome)}`,
-                            },
-                          ]
+                          {
+                            id: "placeholder",
+                            url: `/placeholder.svg?height=300&width=400&query=${encodeURIComponent(produto.nome)}`,
+                          },
+                        ]
 
                     const currentIndex = currentImageIndex[produto.id] || 0
                     const imageUrl = imagens[currentIndex]?.url
@@ -614,9 +617,8 @@ Aguardo retorno. Obrigado!`
                                       e.stopPropagation()
                                       setCurrentImageIndex((prev) => ({ ...prev, [produto.id]: idx }))
                                     }}
-                                    className={`h-1.5 rounded-full transition-all ${
-                                      idx === currentIndex ? "w-6 bg-white" : "w-1.5 bg-white/50"
-                                    }`}
+                                    className={`h-1.5 rounded-full transition-all ${idx === currentIndex ? "w-6 bg-white" : "w-1.5 bg-white/50"
+                                      }`}
                                     aria-label={`Ir para imagem ${idx + 1}`}
                                   />
                                 ))}
@@ -950,9 +952,8 @@ Aguardo retorno. Obrigado!`
               <>
                 <div className="absolute inset-0 overflow-auto p-4">
                   <div
-                    className={`min-h-full flex justify-center transition-all ${
-                      imageZoom > 1 ? "items-start" : "items-center"
-                    }`}
+                    className={`min-h-full flex justify-center transition-all ${imageZoom > 1 ? "items-start" : "items-center"
+                      }`}
                   >
                     <img
                       src={produtoDetalhes.imagens[modalImageIndex]?.url || "/placeholder.svg"}
@@ -1013,11 +1014,10 @@ Aguardo retorno. Obrigado!`
                             setModalImageIndex(idx)
                             setImageZoom(1)
                           }}
-                          className={`flex-shrink-0 h-14 w-14 rounded-lg border-2 overflow-hidden transition-all ${
-                            idx === modalImageIndex
+                          className={`flex-shrink-0 h-14 w-14 rounded-lg border-2 overflow-hidden transition-all ${idx === modalImageIndex
                               ? "border-white scale-110 shadow-lg"
                               : "border-white/40 hover:border-white/70"
-                          }`}
+                            }`}
                         >
                           <img
                             src={img.url || "/placeholder.svg"}
@@ -1070,11 +1070,10 @@ Aguardo retorno. Obrigado!`
                 </div>
                 <div>
                   <div
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                      produtoDetalhes && produtoDetalhes.estoque > 0
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${produtoDetalhes && produtoDetalhes.estoque > 0
                         ? "bg-green-100 text-green-800"
                         : "bg-yellow-100 text-yellow-800"
-                    }`}
+                      }`}
                   >
                     {produtoDetalhes && produtoDetalhes.estoque > 0 ? "Disponível" : "Sob encomenda"}
                   </div>
