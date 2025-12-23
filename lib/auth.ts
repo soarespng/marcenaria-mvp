@@ -36,6 +36,7 @@ export function clearAuthUser() {
   localStorage.removeItem(AUTH_TOKEN_KEY)
 
   document.cookie = `${AUTH_TOKEN_KEY}=; path=/; max-age=0`
+  document.cookie = `${AUTH_TOKEN_KEY}=; path=/app; max-age=0`
 }
 
 export function getAuthToken(): string | null {

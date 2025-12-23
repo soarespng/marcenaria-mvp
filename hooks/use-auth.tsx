@@ -29,16 +29,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.from("usuarios").select("*").eq("id", userId).maybeSingle()
 
       if (error) {
-        console.error("[v0] Erro ao buscar perfil:", error.message)
         return
       }
 
       if (data) {
         setPerfil(data)
       }
-    } catch (err) {
-      console.error("[v0] Exceção ao buscar perfil:", err)
-    }
+    } catch (err) {}
   }
 
   const refreshPerfil = async () => {
@@ -57,7 +54,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await fetchPerfil(authUser.id)
         }
       } catch (err) {
-        console.error("[v0] Erro ao carregar usuário:", err)
       } finally {
         setLoading(false)
       }
@@ -70,7 +66,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearAuthUser()
     setUser(null)
     setPerfil(null)
-    router.push("/login")
+    router.replace("/login")
+    window.location.href = "/login"
   }
 
   return (
