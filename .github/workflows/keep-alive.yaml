@@ -1,0 +1,14 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # todo dia
+  workflow_dispatch:
+
+jobs:
+  ping-home:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acessar Home
+        run: |
+          curl -L https://marcenaria-mvp.vercel.app/
