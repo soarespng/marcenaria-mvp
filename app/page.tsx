@@ -642,10 +642,10 @@ Aguardo retorno. Obrigado!`
                                 color: config?.cor_primaria || "#000",
                               }}
                             >
-                              {new Intl.NumberFormat("pt-BR", {
+                              {produto.preco > 0 ? new Intl.NumberFormat("pt-BR", {
                                 style: "currency",
                                 currency: "BRL",
-                              }).format(produto.preco)}
+                              }).format(produto.preco) : "Solicite um orçamento"}
                             </span>
                             <div className="rounded bg-primary/10 px-2 py-1 text-xs shadow-lg">
                               {produto.estoque > 0 ? "Disponível" : "Sob encomenda"}
@@ -1061,11 +1061,11 @@ Aguardo retorno. Obrigado!`
                       color: config?.cor_primaria || "#000",
                     }}
                   >
-                    {produtoDetalhes &&
+                    {produtoDetalhes && produtoDetalhes.preco > 0 ?
                       new Intl.NumberFormat("pt-BR", {
                         style: "currency",
                         currency: "BRL",
-                      }).format(produtoDetalhes.preco)}
+                      }).format(produtoDetalhes.preco) : "Solicite um orçamento"}
                   </p>
                 </div>
                 <div>

@@ -174,13 +174,12 @@ export default function CriarProdutoPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="preco">Preço (R$) *</Label>
+                  <Label htmlFor="preco">Preço (R$)</Label>
                   <Input
                     id="preco"
                     type="number"
                     step="0.01"
                     min="0"
-                    required
                     value={preco}
                     onChange={(e) => setPreco(e.target.value)}
                     placeholder="0.00"
@@ -189,12 +188,11 @@ export default function CriarProdutoPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="estoque">Estoque *</Label>
+                  <Label htmlFor="estoque">Estoque</Label>
                   <Input
                     id="estoque"
                     type="number"
                     min="0"
-                    required
                     value={estoque}
                     onChange={(e) => setEstoque(e.target.value)}
                     placeholder="0"
